@@ -1,0 +1,48 @@
+{
+  "name": "list-command",
+  "version": "0.0.0",
+  "description": "Command implementation for (un)ordered lists",
+  "main": "index.js",
+  "scripts": {
+    "prepublish": "tsc --module commonjs --declaration index.ts",
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/webmodules/list-command.git"
+  },
+  "keywords": [
+    "browser",
+    "dom",
+    "command",
+    "wrap-range",
+    "unwrap-range",
+    "wrap",
+    "unwrap",
+    "range",
+    "bold",
+    "italic",
+    "underline",
+    "strikethrough",
+    "strike"
+  ],
+  "author": "Nathan Rajlich <nathan@tootallnate.net> (http://n8.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/webmodules/list-command/issues"
+  },
+  "homepage": "https://github.com/webmodules/list-command",
+  "dependencies": {
+    "abstract-command": "~2.0.0",
+    "component-closest": "~0.1.4",
+    "debug": "~2.0.0",
+    "dom-iterator": "~0.3.0",
+    "node-contains": "~1.0.0",
+    "unwrap-range": "~1.0.1",
+    "wrap-range": "~1.0.1"
+  },
+  "devDependencies": {
+    "typescript": "~1.3.0",
+    "zuul": "~1.11.0"
+  }
+}

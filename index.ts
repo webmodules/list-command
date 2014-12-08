@@ -29,6 +29,7 @@ class ListCommand extends AbstractCommand {
   nodeName: string;
 
   constructor(nodeName: string, doc: Document = document) {
+    if (!nodeName) throw new TypeError('"ul" or "ol" must be provided as the node name');
     super(doc);
     this.nodeName = String(nodeName).toLowerCase();
     debug('created ListCommand: nodeName %o', nodeName);

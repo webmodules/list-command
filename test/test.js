@@ -92,7 +92,9 @@ describe('ListCommand', function () {
         // test that the current Selection is still intact
         sel = window.getSelection();
         assert(sel.getRangeAt(0).collapsed);
+        assert(sel.getRangeAt(0).startContainer === div.firstChild.firstChild.firstChild);
         assert(sel.getRangeAt(0).startOffset === 8);
+        assert(sel.getRangeAt(0).endContainer === div.firstChild.firstChild.firstChild);
         assert(sel.getRangeAt(0).endOffset === 8);
       });
 

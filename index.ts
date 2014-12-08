@@ -39,6 +39,9 @@ class ListCommand extends AbstractCommand {
   }
 
   protected _execute(range: Range, value?: any): void {
+    var li: HTMLElement;
+    var list: HTMLElement;
+    var info: saveRange.Info;
     var next: Node = range.startContainer;
     var end: Node = range.endContainer;
     var iterator = new DomIterator(next).revisit(false);
@@ -46,6 +49,33 @@ class ListCommand extends AbstractCommand {
 
     if (this._queryState(range)) {
       // unwrap list
+
+      while (next) {
+        var node: HTMLElement = closest(next, 'li', true);
+        if (-1 === blocks.indexOf(node)) blocks.push(node);
+        if (contains(end, next)) break;
+        next = iterator.next(3 /* Node.TEXT_NODE */);
+      }
+
+      debug('need to unwrap %o LI elements from %o list', blocks.length, this.nodeName);
+      if (blocks.length > 0) {
+        info = saveRange(range, this.document);
+
+        li = blocks[0];
+        list = <HTMLElement>li.parentNode;
+        var parent = <HTMLElement>list.parentNode;
+
+        for (var i = 0; i < blocks.length; i++) {
+          li = blocks[0];
+          var p = this.document.createElement('p');
+          parent.insertBefore(p, list);
+          while (li.firstChild) p.appendChild(li.firstChild);
+        }
+
+        parent.removeChild(list);
+
+        saveRange.load(info, parent);
+      }
 
     } else {
       // wrap list
@@ -59,16 +89,15 @@ class ListCommand extends AbstractCommand {
 
       debug('need to wrap %o block elements into a %o list', blocks.length, this.nodeName);
       if (blocks.length > 0) {
-
-        var info: saveRange.Info = saveRange(range, this.document);
+        info = saveRange(range, this.document);
 
         // create new `nodeName` list element and insert before first "block"
-        var list = this.document.createElement(this.nodeName);
+        list = this.document.createElement(this.nodeName);
         var block: HTMLElement = blocks[0];
         block.parentNode.insertBefore(list, block);
 
         for (var i = 0; i < blocks.length; i++) {
-          var li: HTMLElement = this.document.createElement('li');
+          li = this.document.createElement('li');
           block = blocks[i];
           list.appendChild(li);
           while (block.firstChild) li.appendChild(block.firstChild);

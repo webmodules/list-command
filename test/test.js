@@ -98,6 +98,37 @@ describe('ListCommand', function () {
         assert(sel.getRangeAt(0).endOffset === 8);
       });
 
+      it('should remove a UL node around collapsed Selection when within UL', function () {
+        div = document.createElement('div');
+        div.innerHTML = '<ul><li>hello world</li></ul>';
+        div.setAttribute('contenteditable', 'true');
+        document.body.appendChild(div);
+
+        // set up current Selection
+        var range = document.createRange();
+        range.setStart(div.firstChild.firstChild.firstChild, 8);
+        range.setEnd(div.firstChild.firstChild.firstChild, 8);
+        assert(range.collapsed);
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var list = new ListCommand('ul');
+        list.execute();
+
+        // test that we have the expected HTML at this point
+        assert.equal('<p>hello world</p>', div.innerHTML);
+
+        // test that the current Selection is still intact
+        sel = window.getSelection();
+        assert(sel.getRangeAt(0).collapsed);
+        assert(sel.getRangeAt(0).startContainer === div.firstChild.firstChild);
+        assert(sel.getRangeAt(0).startOffset === 8);
+        assert(sel.getRangeAt(0).endContainer === div.firstChild.firstChild);
+        assert(sel.getRangeAt(0).endOffset === 8);
+      });
+
     });
 
     describe('queryState()', function () {

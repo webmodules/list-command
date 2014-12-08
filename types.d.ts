@@ -40,12 +40,22 @@ declare module "node-contains" {
   export = contains;
 }
 
-declare module "wrap-range" {
-function wrap(range: Range, nodeName: string, doc?: Document): Array<HTMLElement>;
-  export = wrap;
+declare module "block-elements" {
+  var blockElements: string[];
+  export = blockElements;
 }
 
-declare module "unwrap-range" {
-  function unwrap(range: Range, nodeName: string, root?: HTMLElement, doc?: Document): void;
-  export = unwrap;
+declare module "save-range" {
+  function saveRange(range: Range, doc?: Document): saveRange.Info;
+  module saveRange {
+    export interface Info {
+      id: string;
+      range: Range;
+      document: Document;
+      parent: HTMLElement;
+      collapsed: boolean;
+    }
+    export function load(info: saveRange.Info, parent?: HTMLElement): Range;
+  }
+  export = saveRange;
 }

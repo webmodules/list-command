@@ -36,7 +36,7 @@ class ListCommand extends AbstractCommand {
   }
 
   protected _execute(range: Range, value?: any): void {
-    if (this.queryState(range)) {
+    if (this._queryState(range)) {
       // unwrap list
     } else {
       // wrap list

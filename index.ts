@@ -69,10 +69,11 @@ class ListCommand extends AbstractCommand {
 
         var afterList;
         var nextSibling;
+        var lastBlock = blocks[blocks.length - 1];
         if (li === list.firstChild) {
           // insert before
           nextSibling = list;
-        } else if (blocks[blocks.length - 1] === list.lastChild) {
+        } else if (lastBlock === list.lastChild) {
           // insert after
           nextSibling = list.nextSibling;
         } else {
@@ -82,7 +83,6 @@ class ListCommand extends AbstractCommand {
 
           afterList = list.cloneNode(false);
 
-          var lastBlock = blocks[blocks.length - 1];
           while (lastBlock !== list.lastChild) {
             afterList.appendChild(lastBlock.nextSibling);
           }

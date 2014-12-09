@@ -41,6 +41,7 @@ class ListCommand extends AbstractCommand {
   protected _execute(range: Range, value?: any): void {
     var li: HTMLElement;
     var list: HTMLElement;
+    var block: HTMLElement;
     var info: saveRange.Info;
     var next: Node = range.startContainer;
     var end: Node = range.endContainer;
@@ -67,9 +68,9 @@ class ListCommand extends AbstractCommand {
 
         for (var i = 0; i < blocks.length; i++) {
           li = blocks[i];
-          var p = this.document.createElement('p');
-          parent.insertBefore(p, list);
-          while (li.firstChild) p.appendChild(li.firstChild);
+          block = this.document.createElement('p');
+          parent.insertBefore(block, list);
+          while (li.firstChild) block.appendChild(li.firstChild);
         }
 
         parent.removeChild(list);
@@ -93,7 +94,7 @@ class ListCommand extends AbstractCommand {
 
         // create new `nodeName` list element and insert before first "block"
         list = this.document.createElement(this.nodeName);
-        var block: HTMLElement = blocks[0];
+        block = blocks[0];
         block.parentNode.insertBefore(list, block);
 
         for (var i = 0; i < blocks.length; i++) {

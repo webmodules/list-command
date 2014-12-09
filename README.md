@@ -1,5 +1,5 @@
 list-command
-==============
+============
 ### Command implementation for (un)ordered lists
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/list-command.svg)](https://saucelabs.com/u/list-command)

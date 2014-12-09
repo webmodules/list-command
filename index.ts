@@ -69,11 +69,19 @@ class ListCommand extends AbstractCommand {
         for (var i = 0; i < blocks.length; i++) {
           li = blocks[i];
           block = this.document.createElement('p');
-          parent.insertBefore(block, list);
+          // TODO: handle the "middle split UL/OL" case
+          if (li === list.lastChild) {
+            // "insertAfter" http://stackoverflow.com/a/4793630
+            parent.insertBefore(block, list.nextSibling);
+          } else {
+            parent.insertBefore(block, list);
+          }
           while (li.firstChild) block.appendChild(li.firstChild);
+          li.parentNode.removeChild(li);
         }
 
-        parent.removeChild(list);
+        // if there are no more elements in the UL/OL, then remove it from the DOM
+        if (!list.firstChild) parent.removeChild(list);
 
         saveRange.load(info, parent);
       }

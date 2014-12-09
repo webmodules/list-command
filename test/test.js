@@ -95,6 +95,34 @@ describe('ListCommand', function () {
         assert.equal('netwot', sel.getRangeAt(0).toString());
       });
 
+      it('should insert a UL node around middle block at current Selection', function () {
+        div = document.createElement('div');
+        div.innerHTML = '<p>one</p><p>two</p><p>three</p><p>four</p>';
+        div.setAttribute('contenteditable', 'true');
+        document.body.appendChild(div);
+
+        // set up current Selection
+        var range = document.createRange();
+        range.setStart(div.childNodes[1].firstChild, 1);
+        range.setEnd(div.childNodes[2].firstChild, 1);
+        assert(!range.collapsed);
+        assert.equal('wot', range.toString());
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var list = new ListCommand('ul');
+        list.execute();
+
+        // test that we have the expected HTML at this point
+        assert.equal('<p>one</p><ul><li>two</li><li>three</li></ul><p>four</p>', div.innerHTML);
+
+        // test that the current Selection is still intact
+        sel = window.getSelection();
+        assert.equal('wot', sel.getRangeAt(0).toString());
+      });
+
       it('should insert a UL node around block at collapsed Selection', function () {
         div = document.createElement('div');
         div.innerHTML = '<p>hello world</p>';
@@ -154,6 +182,34 @@ describe('ListCommand', function () {
         assert.equal('netwot', sel.getRangeAt(0).toString());
       });
 
+      it('should remove a UL node around middle block at current Selection', function () {
+        div = document.createElement('div');
+        div.innerHTML = '<p>one</p><ul><li>two</li><li>three</li></ul><p>four</p>';
+        div.setAttribute('contenteditable', 'true');
+        document.body.appendChild(div);
+
+        // set up current Selection
+        var range = document.createRange();
+        range.setStart(div.childNodes[1].firstChild.firstChild, 1);
+        range.setEnd(div.childNodes[1].lastChild.firstChild, 1);
+        assert(!range.collapsed);
+        assert.equal('wot', range.toString());
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var list = new ListCommand('ul');
+        list.execute();
+
+        // test that we have the expected HTML at this point
+        assert.equal('<p>one</p><p>two</p><p>three</p><p>four</p>', div.innerHTML);
+
+        // test that the current Selection is still intact
+        sel = window.getSelection();
+        assert.equal('wot', sel.getRangeAt(0).toString());
+      });
+
       it('should remove a UL node around collapsed Selection when within UL', function () {
         div = document.createElement('div');
         div.innerHTML = '<ul><li>hello world</li></ul>';
@@ -183,6 +239,37 @@ describe('ListCommand', function () {
         assert(sel.getRangeAt(0).startOffset === 8);
         assert(sel.getRangeAt(0).endContainer === div.firstChild.firstChild);
         assert(sel.getRangeAt(0).endOffset === 8);
+      });
+
+      it('should remove the last LI around collapsed Selection at end of list', function () {
+        div = document.createElement('div');
+        div.innerHTML = '<ul><li>one</li><li>two</li><li>three</li></ul>';
+        div.setAttribute('contenteditable', 'true');
+        document.body.appendChild(div);
+
+        // set up current Selection
+        var range = document.createRange();
+        range.setStart(div.firstChild.lastChild.firstChild, 3);
+        range.setEnd(div.firstChild.lastChild.firstChild, 3);
+        assert(range.collapsed);
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var list = new ListCommand('ul');
+        list.execute();
+
+        // test that we have the expected HTML at this point
+        assert.equal('<ul><li>one</li><li>two</li></ul><p>three</p>', div.innerHTML);
+
+        // test that the current Selection is still intact
+        sel = window.getSelection();
+        assert(sel.getRangeAt(0).collapsed);
+        assert(sel.getRangeAt(0).startContainer === div.lastChild.firstChild);
+        assert(sel.getRangeAt(0).startOffset === 3);
+        assert(sel.getRangeAt(0).endContainer === div.lastChild.firstChild);
+        assert(sel.getRangeAt(0).endOffset === 3);
       });
 
     });

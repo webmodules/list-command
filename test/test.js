@@ -4,6 +4,7 @@
  */
 
 var assert = require('assert');
+var contains = require('node-contains');
 var ListCommand = require('../');
 
 describe('ListCommand', function () {
@@ -147,11 +148,12 @@ describe('ListCommand', function () {
 
         // test that the current Selection is still intact
         sel = window.getSelection();
-        assert(sel.getRangeAt(0).collapsed);
-        assert(sel.getRangeAt(0).startContainer === div.firstChild.firstChild.firstChild);
-        assert(sel.getRangeAt(0).startOffset === 8);
-        assert(sel.getRangeAt(0).endContainer === div.firstChild.firstChild.firstChild);
-        assert(sel.getRangeAt(0).endOffset === 8);
+        range = sel.getRangeAt(0);
+
+        var li = div.firstChild.firstChild;
+        assert(range.collapsed);
+        assert(contains(li, range.startContainer));
+        assert(contains(li, range.endContainer));
       });
 
       it('should remove a UL node around multiple blocks at current Selection', function () {
@@ -234,11 +236,12 @@ describe('ListCommand', function () {
 
         // test that the current Selection is still intact
         sel = window.getSelection();
-        assert(sel.getRangeAt(0).collapsed);
-        assert(sel.getRangeAt(0).startContainer === div.firstChild.firstChild);
-        assert(sel.getRangeAt(0).startOffset === 8);
-        assert(sel.getRangeAt(0).endContainer === div.firstChild.firstChild);
-        assert(sel.getRangeAt(0).endOffset === 8);
+        range = sel.getRangeAt(0);
+
+        var p = div.firstChild;
+        assert(range.collapsed);
+        assert(contains(p, range.startContainer));
+        assert(contains(p, range.endContainer));
       });
 
       it('should remove the last two LIs around Selection at end of list', function () {
@@ -294,11 +297,12 @@ describe('ListCommand', function () {
 
         // test that the current Selection is still intact
         sel = window.getSelection();
-        assert(sel.getRangeAt(0).collapsed);
-        assert(sel.getRangeAt(0).startContainer === div.childNodes[1].firstChild);
-        assert(sel.getRangeAt(0).startOffset === 2);
-        assert(sel.getRangeAt(0).endContainer === div.childNodes[1].firstChild);
-        assert(sel.getRangeAt(0).endOffset === 2);
+        range = sel.getRangeAt(0);
+
+        var p = div.childNodes[1];
+        assert(range.collapsed);
+        assert(contains(p, range.startContainer));
+        assert(contains(p, range.endContainer));
       });
 
       it('should remove the last LI around collapsed Selection at end of list', function () {
@@ -325,11 +329,12 @@ describe('ListCommand', function () {
 
         // test that the current Selection is still intact
         sel = window.getSelection();
-        assert(sel.getRangeAt(0).collapsed);
-        assert(sel.getRangeAt(0).startContainer === div.lastChild.firstChild);
-        assert(sel.getRangeAt(0).startOffset === 3);
-        assert(sel.getRangeAt(0).endContainer === div.lastChild.firstChild);
-        assert(sel.getRangeAt(0).endOffset === 3);
+        range = sel.getRangeAt(0);
+
+        var p = div.lastChild;
+        assert(range.collapsed);
+        assert(contains(p, range.startContainer));
+        assert(contains(p, range.endContainer));
       });
 
     });

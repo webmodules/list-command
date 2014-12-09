@@ -270,6 +270,39 @@ describe('ListCommand', function () {
         assert.equal('wothr', sel.getRangeAt(0).toString());
       });
 
+      it('should remove the middle LI around collapsed Selection in middle of list', function () {
+        div = document.createElement('div');
+        div.innerHTML = '<ul><li>one</li><li>two</li><li>three</li></ul>';
+        div.setAttribute('contenteditable', 'true');
+        document.body.appendChild(div);
+
+        // set up current Selection
+        var range = document.createRange();
+        range.setStart(div.firstChild.childNodes[1].firstChild, 2);
+        range.setEnd(div.firstChild.childNodes[1].firstChild, 2);
+        assert(range.collapsed);
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var list = new ListCommand('ul');
+        console.log(div.innerHTML);
+        list.execute();
+        console.log(div.innerHTML);
+
+        // test that we have the expected HTML at this point
+        assert.equal('<ul><li>one</li></ul><p>two</p><ul><li>three</li></ul>', div.innerHTML);
+
+        // test that the current Selection is still intact
+        sel = window.getSelection();
+        assert(sel.getRangeAt(0).collapsed);
+        assert(sel.getRangeAt(0).startContainer === div.childNodes[1].firstChild);
+        assert(sel.getRangeAt(0).startOffset === 2);
+        assert(sel.getRangeAt(0).endContainer === div.childNodes[1].firstChild);
+        assert(sel.getRangeAt(0).endOffset === 2);
+      });
+
       it('should remove the last LI around collapsed Selection at end of list', function () {
         div = document.createElement('div');
         div.innerHTML = '<ul><li>one</li><li>two</li><li>three</li></ul>';

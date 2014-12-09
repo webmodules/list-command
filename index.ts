@@ -67,6 +67,7 @@ class ListCommand extends AbstractCommand {
         var parent = <HTMLElement>list.parentNode;
         var fragment = this.document.createDocumentFragment();
 
+        var afterList;
         var nextSibling;
         if (li === list.firstChild) {
           // insert before
@@ -75,7 +76,16 @@ class ListCommand extends AbstractCommand {
           // insert after
           nextSibling = list.nextSibling;
         } else {
-          // TODO: handle the "middle split UL/OL" case
+          // somewhere in the middle… we need to clone the OL/UL
+          // node and place it at the end of the document fragment
+          nextSibling = list.nextSibling;
+
+          afterList = list.cloneNode(false);
+
+          var lastBlock = blocks[blocks.length - 1];
+          while (lastBlock !== list.lastChild) {
+            afterList.appendChild(lastBlock.nextSibling);
+          }
         }
 
         for (var i = 0; i < blocks.length; i++) {
@@ -84,14 +94,18 @@ class ListCommand extends AbstractCommand {
 
           fragment.appendChild(block);
 
-          parent.insertBefore(fragment, nextSibling);
-
           // transfer LI children to new P element
           while (li.firstChild) block.appendChild(li.firstChild);
 
           // remove empty LI element
           li.parentNode.removeChild(li);
         }
+
+        if (afterList) {
+          fragment.appendChild(afterList);
+        }
+
+        parent.insertBefore(fragment, nextSibling);
 
         // if there are no more elements in the UL/OL, then remove it from the DOM
         if (!list.firstChild) parent.removeChild(list);

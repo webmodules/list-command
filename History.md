@@ -1,4 +1,10 @@
 
+1.0.1 / 2014-12-09
+==================
+
+  * initial take at converting UL <-> OL
+  * test: attempt to make tests pass on Firefox
+
 1.0.0 / 2014-12-08
 ==================
 

@@ -287,9 +287,7 @@ describe('ListCommand', function () {
         sel.addRange(range);
 
         var list = new ListCommand('ul');
-        console.log(div.innerHTML);
         list.execute();
-        console.log(div.innerHTML);
 
         // test that we have the expected HTML at this point
         assert.equal('<ul><li>one</li></ul><p>two</p><ul><li>three</li></ul>', div.innerHTML);

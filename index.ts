@@ -128,7 +128,7 @@ class ListCommand extends AbstractCommand {
         info = saveRange(range, this.document);
 
         // create new `nodeName` list element and insert before first "block"
-        list = this.document.createElement(this.nodeName);
+        list = this.createList();
         block = blocks[0];
         block.parentNode.insertBefore(list, block);
 
@@ -136,7 +136,7 @@ class ListCommand extends AbstractCommand {
           block = blocks[i];
           if ('LI' === block.nodeName) {
             var otherList = closest(block, 'ol, ul');
-            if (otherList && otherList.nodeName === (this.nodeName === 'ol' ? 'UL' : 'OL')) {
+            if (otherList && !this.isList(otherList)) {
               // opposite type of list?
               // place new list before the other list,
               // then transfer the child nodes to the new list,
@@ -175,6 +175,14 @@ class ListCommand extends AbstractCommand {
     }
 
     return true;
+  }
+
+  protected createList(): HTMLElement {
+    return this.document.createElement(this.nodeName);
+  }
+
+  protected isList(element: HTMLElement): boolean {
+    return element.nodeName.toLowerCase() === this.nodeName;
   }
 }
 

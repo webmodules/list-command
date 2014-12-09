@@ -66,7 +66,7 @@ class ListCommand extends AbstractCommand {
         var parent = <HTMLElement>list.parentNode;
 
         for (var i = 0; i < blocks.length; i++) {
-          li = blocks[0];
+          li = blocks[i];
           var p = this.document.createElement('p');
           parent.insertBefore(p, list);
           while (li.firstChild) p.appendChild(li.firstChild);

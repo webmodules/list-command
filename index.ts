@@ -62,7 +62,7 @@ class ListCommand extends AbstractCommand {
         info = saveRange(range, this.document);
 
         li = blocks[0];
-        list = <HTMLElement>li.parentNode;
+        list = <HTMLElement>closest(li, this.nodeName);
         var parent = <HTMLElement>list.parentNode;
 
         for (var i = 0; i < blocks.length; i++) {

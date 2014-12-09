@@ -168,8 +168,8 @@ class ListCommand extends AbstractCommand {
     var iterator = new DomIterator(next).revisit(false);
 
     while (next) {
-      var node: Node = closest(next, this.nodeName, true);
-      if (!node) return false;
+      var node: HTMLElement = closest(next, this.nodeName, true);
+      if (!node || !this.isList(node)) return false;
       if (contains(end, next)) break;
       next = iterator.next(3 /* Node.TEXT_NODE */);
     }

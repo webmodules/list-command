@@ -13,7 +13,7 @@ import saveRange = require('save-range');
 import DEBUG = require('debug');
 
 var debug = DEBUG('list-command');
-var blockSel = blockElements.join(', ');
+var blockSel = ['li'].concat(blockElements).join(', ');
 
 /**
  * Cross-browser `insertOrderedList` and `insertUnorderedList` command
@@ -133,11 +133,27 @@ class ListCommand extends AbstractCommand {
         block.parentNode.insertBefore(list, block);
 
         for (var i = 0; i < blocks.length; i++) {
-          li = this.document.createElement('li');
           block = blocks[i];
-          list.appendChild(li);
-          while (block.firstChild) li.appendChild(block.firstChild);
-          block.parentNode.removeChild(block);
+          if ('LI' === block.nodeName) {
+            var otherList = closest(block, 'ol, ul');
+            if (otherList && otherList.nodeName === (this.nodeName === 'ol' ? 'UL' : 'OL')) {
+              // opposite type of list?
+              // place new list before the other list,
+              // then transfer the child nodes to the new list,
+              // and then finally remove the old list from the DOM
+              debug('detected opposite list type %o, converting to %o', otherList.nodeName.toLowerCase(), this.nodeName);
+              otherList.parentNode.insertBefore(list, otherList);
+              while (otherList.firstChild) list.appendChild(otherList.firstChild);
+              otherList.parentNode.removeChild(otherList);
+            } else {
+              continue;
+            }
+          } else {
+            li = this.document.createElement('li');
+            list.appendChild(li);
+            while (block.firstChild) li.appendChild(block.firstChild);
+            block.parentNode.removeChild(block);
+          }
         }
 
         saveRange.load(info, list);

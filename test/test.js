@@ -337,6 +337,69 @@ describe('ListCommand', function () {
         assert(contains(p, range.endContainer));
       });
 
+      it('should turn an OL list into a UL list with collapsed Selection', function () {
+        div = document.createElement('div');
+        div.innerHTML = '<ol><li>one</li><li>two</li><li>three</li></ol>';
+        div.setAttribute('contenteditable', 'true');
+        document.body.appendChild(div);
+
+        // set up current Selection
+        var range = document.createRange();
+        range.setStart(div.firstChild.firstChild.firstChild, 1);
+        range.setEnd(div.firstChild.firstChild.firstChild, 1);
+        assert(range.collapsed);
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var list = new ListCommand('ul');
+        list.execute();
+
+        // test that we have the expected HTML at this point
+        assert.equal('<ul><li>one</li><li>two</li><li>three</li></ul>', div.innerHTML);
+
+        // test that the current Selection is still intact
+        sel = window.getSelection();
+        range = sel.getRangeAt(0);
+
+        var li = div.firstChild.firstChild;
+        assert(range.collapsed);
+        assert(contains(li, range.startContainer));
+        assert(contains(li, range.endContainer));
+      });
+
+      it('should turn an OL list into a UL list with multiple LIs in Selection', function () {
+        div = document.createElement('div');
+        div.innerHTML = '<ol><li>one</li><li>two</li><li>three</li></ol>';
+        div.setAttribute('contenteditable', 'true');
+        document.body.appendChild(div);
+
+        // set up current Selection
+        var range = document.createRange();
+        range.setStart(div.firstChild.firstChild.firstChild, 1);
+        range.setEnd(div.firstChild.lastChild.firstChild, 1);
+        assert(!range.collapsed);
+        assert.equal('netwot', range.toString());
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var list = new ListCommand('ul');
+        list.execute();
+
+        // test that we have the expected HTML at this point
+        assert.equal('<ul><li>one</li><li>two</li><li>three</li></ul>', div.innerHTML);
+
+        // test that the current Selection is still intact
+        sel = window.getSelection();
+        range = sel.getRangeAt(0);
+
+        assert(!range.collapsed);
+        assert.equal('netwot', range.toString());
+      });
+
     });
 
     describe('queryState()', function () {

@@ -67,6 +67,34 @@ describe('ListCommand', function () {
         assert.equal('e', sel.getRangeAt(0).toString());
       });
 
+      it('should insert a UL node around multiple blocks at current Selection', function () {
+        div = document.createElement('div');
+        div.innerHTML = '<p>one</p><p>two</p><p>three</p>';
+        div.setAttribute('contenteditable', 'true');
+        document.body.appendChild(div);
+
+        // set up current Selection
+        var range = document.createRange();
+        range.setStart(div.firstChild.firstChild, 1);
+        range.setEnd(div.lastChild.firstChild, 1);
+        assert(!range.collapsed);
+        assert.equal('netwot', range.toString());
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var list = new ListCommand('ul');
+        list.execute();
+
+        // test that we have the expected HTML at this point
+        assert.equal('<ul><li>one</li><li>two</li><li>three</li></ul>', div.innerHTML);
+
+        // test that the current Selection is still intact
+        sel = window.getSelection();
+        assert.equal('netwot', sel.getRangeAt(0).toString());
+      });
+
       it('should insert a UL node around block at collapsed Selection', function () {
         div = document.createElement('div');
         div.innerHTML = '<p>hello world</p>';
@@ -96,6 +124,34 @@ describe('ListCommand', function () {
         assert(sel.getRangeAt(0).startOffset === 8);
         assert(sel.getRangeAt(0).endContainer === div.firstChild.firstChild.firstChild);
         assert(sel.getRangeAt(0).endOffset === 8);
+      });
+
+      it('should remove a UL node around multiple blocks at current Selection', function () {
+        div = document.createElement('div');
+        div.innerHTML = '<ul><li>one</li><li>two</li><li>three</li></ul>';
+        div.setAttribute('contenteditable', 'true');
+        document.body.appendChild(div);
+
+        // set up current Selection
+        var range = document.createRange();
+        range.setStart(div.firstChild.firstChild.firstChild, 1);
+        range.setEnd(div.firstChild.lastChild.firstChild, 1);
+        assert(!range.collapsed);
+        assert.equal('netwot', range.toString());
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var list = new ListCommand('ul');
+        list.execute();
+
+        // test that we have the expected HTML at this point
+        assert.equal('<p>one</p><p>two</p><p>three</p>', div.innerHTML);
+
+        // test that the current Selection is still intact
+        sel = window.getSelection();
+        assert.equal('netwot', sel.getRangeAt(0).toString());
       });
 
       it('should remove a UL node around collapsed Selection when within UL', function () {

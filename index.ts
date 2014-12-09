@@ -65,18 +65,31 @@ class ListCommand extends AbstractCommand {
         li = blocks[0];
         list = <HTMLElement>closest(li, this.nodeName);
         var parent = <HTMLElement>list.parentNode;
+        var fragment = this.document.createDocumentFragment();
+
+        var nextSibling;
+        if (li === list.firstChild) {
+          // insert before
+          nextSibling = list;
+        } else if (blocks[blocks.length - 1] === list.lastChild) {
+          // insert after
+          nextSibling = list.nextSibling;
+        } else {
+          // TODO: handle the "middle split UL/OL" case
+        }
 
         for (var i = 0; i < blocks.length; i++) {
           li = blocks[i];
           block = this.document.createElement('p');
-          // TODO: handle the "middle split UL/OL" case
-          if (li === list.lastChild) {
-            // "insertAfter" http://stackoverflow.com/a/4793630
-            parent.insertBefore(block, list.nextSibling);
-          } else {
-            parent.insertBefore(block, list);
-          }
+
+          fragment.appendChild(block);
+
+          parent.insertBefore(fragment, nextSibling);
+
+          // transfer LI children to new P element
           while (li.firstChild) block.appendChild(li.firstChild);
+
+          // remove empty LI element
           li.parentNode.removeChild(li);
         }
 

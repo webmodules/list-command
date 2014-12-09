@@ -241,6 +241,35 @@ describe('ListCommand', function () {
         assert(sel.getRangeAt(0).endOffset === 8);
       });
 
+      it('should remove the last two LIs around Selection at end of list', function () {
+        div = document.createElement('div');
+        div.innerHTML = '<ul><li>one</li><li>two</li><li>three</li></ul>';
+        div.setAttribute('contenteditable', 'true');
+        document.body.appendChild(div);
+
+        // set up current Selection
+        var range = document.createRange();
+        range.setStart(div.firstChild.childNodes[1].firstChild, 1);
+        range.setEnd(div.firstChild.lastChild.firstChild, 3);
+        assert(!range.collapsed);
+        assert.equal('wothr', range.toString());
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var list = new ListCommand('ul');
+        list.execute();
+
+        // test that we have the expected HTML at this point
+        assert.equal('<ul><li>one</li></ul><p>two</p><p>three</p>', div.innerHTML);
+
+        // test that the current Selection is still intact
+        sel = window.getSelection();
+        assert(!sel.getRangeAt(0).collapsed);
+        assert.equal('wothr', sel.getRangeAt(0).toString());
+      });
+
       it('should remove the last LI around collapsed Selection at end of list', function () {
         div = document.createElement('div');
         div.innerHTML = '<ul><li>one</li><li>two</li><li>three</li></ul>';

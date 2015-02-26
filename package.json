@@ -36,7 +36,7 @@
     "abstract-command": "~2.0.0",
     "block-elements": "1",
     "component-closest": "~0.1.4",
-    "debug": "~2.0.0",
+    "debug": "2",
     "dom-iterator": "~0.3.0",
     "node-contains": "~1.0.0",
     "save-range": "~1.0.0",

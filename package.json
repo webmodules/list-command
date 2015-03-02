@@ -39,13 +39,10 @@
     "debug": "2",
     "dom-iterator": "~0.3.0",
     "node-contains": "~1.0.0",
-    "save-range": "~1.1.0",
-    "unwrap-range": "~1.1.2",
-    "wrap-range": "~1.1.1"
+    "save-range": "~1.1.0"
   },
   "devDependencies": {
-    "node-contains": "~1.0.0",
     "typescript": "~1.4.1",
-    "zuul": "1"
+    "zuul": "2"
   }
 }

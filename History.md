@@ -1,4 +1,11 @@
 
+1.1.5 / 2015-03-09
+==================
+
+  * test: add BR node test case
+  * package: add "node-contains" as a dev dep
+  * refactor to use "range-iterator" instead of "dom-iterator"
+
 1.1.4 / 2015-03-02
 ==================
 

@@ -6,8 +6,7 @@
 
 import AbstractCommand = require('abstract-command');
 import closest = require('component-closest');
-import contains = require('node-contains');
-import DomIterator = require('dom-iterator');
+import RangeIterator = require('range-iterator');
 import blockElements = require('block-elements');
 import saveRange = require('save-range');
 import DEBUG = require('debug');
@@ -43,19 +42,16 @@ class ListCommand extends AbstractCommand {
     var list: HTMLElement;
     var block: HTMLElement;
     var info: saveRange.Info;
-    var next: Node = range.startContainer;
-    var end: Node = range.endContainer;
-    var iterator = new DomIterator(next).revisit(false);
+    var next;
+    var iterator = RangeIterator(range, (node) => 0 === node.childNodes.length);
     var blocks: HTMLElement[] = [];
 
     if (this._queryState(range)) {
       // unwrap list
 
-      while (next) {
-        var node: HTMLElement = closest(next, 'li', true);
+      while (!(next = iterator.next()).done) {
+        var node: HTMLElement = closest(next.value, 'li', true);
         if (-1 === blocks.indexOf(node)) blocks.push(node);
-        if (contains(end, next)) break;
-        next = iterator.next(3 /* Node.TEXT_NODE */);
       }
 
       debug('need to unwrap %o LI elements from %o list', blocks.length, this.nodeName);
@@ -116,11 +112,9 @@ class ListCommand extends AbstractCommand {
     } else {
       // wrap list
 
-      while (next) {
-        var node: HTMLElement = closest(next, blockSel, true);
+      while (!(next = iterator.next()).done) {
+        var node: HTMLElement = closest(next.value, blockSel, true);
         if (-1 === blocks.indexOf(node)) blocks.push(node);
-        if (contains(end, next)) break;
-        next = iterator.next(3 /* Node.TEXT_NODE */);
       }
 
       debug('need to wrap %o block elements into a %o list', blocks.length, this.nodeName);
@@ -163,15 +157,12 @@ class ListCommand extends AbstractCommand {
   }
 
   protected _queryState(range: Range): boolean {
-    var next: Node = range.startContainer;
-    var end: Node = range.endContainer;
-    var iterator = new DomIterator(next).revisit(false);
+    var next;
+    var iterator = RangeIterator(range, (node) => 0 === node.childNodes.length);
 
-    while (next) {
-      var node: HTMLElement = closest(next, this.nodeName, true);
+    while (!(next = iterator.next()).done) {
+      var node: HTMLElement = closest(next.value, this.nodeName, true);
       if (!node || !this.isList(node)) return false;
-      if (contains(end, next)) break;
-      next = iterator.next(3 /* Node.TEXT_NODE */);
     }
 
     return true;

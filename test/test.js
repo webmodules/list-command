@@ -400,6 +400,42 @@ describe('ListCommand', function () {
         assert.equal('netwot', range.toString());
       });
 
+      it('should insert a UL node around multiple blocks with BR within', function () {
+        div = document.createElement('div');
+        div.innerHTML = '<p>one</p>' +
+                        '<p><br></p>' +
+                        '<p>three</p>';
+        div.setAttribute('contenteditable', 'true');
+        document.body.appendChild(div);
+
+        // set up current Selection
+        var range = document.createRange();
+        range.setStart(div.firstChild.firstChild, 1);
+        range.setEnd(div.lastChild.firstChild, 1);
+        assert(!range.collapsed);
+        assert.equal('net', range.toString());
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var list = new ListCommand('ul');
+        list.execute();
+
+        // test that we have the expected HTML at this point
+        assert.equal('<ul>' +
+                       '<li>one</li>' +
+                       '<li><br></li>' +
+                       '<li>three</li>' +
+                     '</ul>', div.innerHTML);
+
+        // test that the current Selection is still intact
+        sel = window.getSelection();
+        range = sel.getRangeAt(0);
+        assert(!range.collapsed);
+        assert.equal('net', range.toString());
+      });
+
     });
 
     describe('queryState()', function () {
